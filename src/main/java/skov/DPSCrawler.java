@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class DPSCrawler {
@@ -25,6 +26,15 @@ public class DPSCrawler {
             driver.findElement(By.id("j_password")).sendKeys("xxx"); //!!!
             driver.findElement(By.name("j_idt44")).click();
 
+            //Test that P0 is open...
+            //driver.findElement(By.className("rf-trn-hnd-colps")).click(); //click on p0
+            //Thread.sleep(3000);
+            if (driver.findElements(By.className("rf-trn-lbl")).get(1).getText().indexOf("m0 - ") == -1){ //p0 is unfolded, lets fold again.
+                driver.findElement(By.className("rf-trn-hnd-exp")).click(); //click on p0
+            }
+
+            //Thread.sleep(100000);
+
             isGreen(driver, "p0 ", 0);
             isGreen(driver, "m0 ", 1);
             isGreen(driver, "es1", 24);
@@ -38,16 +48,20 @@ public class DPSCrawler {
             addToMailText("Link to DPS surveillance overview:");
             addToMailText("https://dps.nykreditnet.net/dps/surveillanceoverview.faces");
 
+            addToMailText("Sending mail to: " + Arrays.asList(args));
+            new MailService().sendMail("Server status from DPS", mailTxt, args);
             addToMailText("Bye.");
-            new MailService().sendMail("Server status from DPS", mailTxt);
-
         } catch (IndexOutOfBoundsException e) {
+            System.out.println();
             addToMailText("FATAL: Did you use the right password?");
+            System.out.println();
             System.out.println(e);
             addToMailText(e.toString());
+            new MailService().sendMail("FAILED: Server status from DPS", mailTxt, new String[]{"alsk@nykredit.dk"});
         } catch (Exception e) {
             System.out.println(e);
             addToMailText(e.toString());
+            new MailService().sendMail("FAILED: Server status from DPS", mailTxt, new String[]{"alsk@nykredit.dk"});
         } finally {
             if (driver != null)
                 driver.quit();

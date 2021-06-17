@@ -1,7 +1,6 @@
 package skov;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 
 public class DbHandler {
 
@@ -12,7 +11,7 @@ public class DbHandler {
         makeJDBCConnection();
     }
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws Exception {
         try {
             DbHandler dbHandler = new DbHandler();
 
@@ -53,9 +52,9 @@ public class DbHandler {
         }
     }
 
-    public static void addDataToDB(String env, String domain, String cluster, String lastcheck, int status) {
+    public static void addDataToDB(String env, String domain, String cluster, String lastcheck, int status, Timestamp timestamp) throws Exception {
         try {
-            String insertQueryStatement = "INSERT INTO dpscrawler (env, domain, cluster, lastcheck, status) VALUES  (?,?,?,?,?)";
+            String insertQueryStatement = "INSERT INTO dpscrawler (env, domain, cluster, lastcheck, status, timestamp) VALUES  (?,?,?,?,?,?)";
 
             //System.out.println("preparing statement: " + insertQueryStatement);
             //System.out.println("env=" + env + ", domain=" + domain + ", cluster=" + cluster + ", lastcheck=" + lastcheck + ", status=" + status);
@@ -66,6 +65,7 @@ public class DbHandler {
             prepareStat.setString(3, cluster);
             prepareStat.setString(4, lastcheck);
             prepareStat.setInt(5, status);
+            prepareStat.setTimestamp(6, timestamp);
 
             // execute insert SQL statement
             prepareStat.executeUpdate();
@@ -75,10 +75,11 @@ public class DbHandler {
         } catch (SQLException e) {
             System.out.println(e);
             //  e.printStackTrace();
+            throw e;
         }
     }
 
-    public static void getDataFromDB() {
+    public static void getDataFromDB() throws Exception {
         try {
             // MySQL Select Query Tutorial
             String getQueryStatement = "SELECT * FROM dpscrawler";
@@ -103,6 +104,7 @@ public class DbHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
     }

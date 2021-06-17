@@ -11,6 +11,8 @@ import java.util.Date;
 
 public class DPSCrawler {
 
+    private static DbHandler dbHandler = new DbHandler();
+
     public static String mailTxt = "";
 
     public static void main(String[] args) {
@@ -23,7 +25,7 @@ public class DPSCrawler {
             driver = initWebDriver();
             driver.navigate().to(pageToScrape);
             driver.findElement(By.id("j_username")).sendKeys("alsk");
-            driver.findElement(By.id("j_password")).sendKeys("xxx"); //!!!
+            driver.findElement(By.id("j_password")).sendKeys("xxx");
             driver.findElement(By.name("j_idt44")).click();
 
             //Test that P0 is open...
@@ -68,14 +70,18 @@ public class DPSCrawler {
         }
     }
 
-    private static void isGreen(WebDriver driver, String logicalName, int index) {
+    private static void isGreen(WebDriver driver, String env, int index) {
         String imageFilename = driver.findElements(By.className("rf-trn-ico-colps")).get(index).getAttribute("src");
         String info = driver.findElements(By.className("rf-trn-lbl")).get(index).getText();
+        int ok = -1;
         if (imageFilename.contains("green-dot.png")) {
-            addToMailText(logicalName + " is up and running, info=" + info);
+            addToMailText(env + " is up and running, info=" + info);
+            ok = 1;
         } else {
-            addToMailText(logicalName + " ** IS NOT UP!! **  info=" + info);// + ", imageFilename=" + imageFilename);
+            addToMailText(env + " ** IS NOT UP!! **  info=" + info);// + ", imageFilename=" + imageFilename);
+            ok = 0;
         }
+        dbHandler.addDataToDB(env, "na", "na", info, ok);
     }
 
     public static WebDriver initWebDriver() {

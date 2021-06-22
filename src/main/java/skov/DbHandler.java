@@ -79,6 +79,24 @@ public class DbHandler {
         }
     }
 
+    public void cleanupDb() throws Exception {
+        String sql = "delete from dpscrawler where timestamp IN (\n" +
+                "    select timestamp from (\n" +
+                "        SELECT timestamp, count(*) as count\n" +
+                "        FROM `dpscrawler`\n" +
+                "        group by timestamp\n" +
+                "        order by timestamp\n" +
+                "    ) taadaa1\n" +
+                "    where count != 26\n" +
+                ")";
+
+        prepareStat = conn.prepareStatement(sql);
+        int i = prepareStat.executeUpdate();
+        System.out.println("Cleanup deleted # records=" + i);
+        //System.out.println(env + " added successfully");
+        prepareStat.close();
+    }
+
     public static void getDataFromDB() throws Exception {
         try {
             // MySQL Select Query Tutorial

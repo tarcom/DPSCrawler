@@ -18,7 +18,7 @@ public class MailService {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("relaygw.nykreditnet.net");
         //email.setSmtpPort(587); //use default
-        try {
+
             email.setFrom("alsk@nykredit.dk", "ALSK automatic mail service");
             //email.addTo("pbn@nykredit.dk");
             //email.addCc("alsk@nykredit.dk");
@@ -30,10 +30,5 @@ public class MailService {
             email.send();
             System.out.println("Sent message successfully....");
             return true;
-
-        } catch (EmailException mex) {
-            mex.printStackTrace();
-            return false;
-        }
     }
 }

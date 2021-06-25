@@ -28,7 +28,7 @@ public class DPSCrawler {
     public static String mailTxt = "";
 
     public static void main(String[] args) throws Exception {
-//        if (args.length == 0) args = new String[]{"alsk@nykredit.dk"};
+        //if (args.length == 0) args = new String[]{"alsk@nykredit.dk", "alsk@nykredit.dk"};
         try {
             new DPSCrawler().doCrawl(args);
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class DPSCrawler {
 
             addToMailText("Sending mail to: " + Arrays.asList(args));
             addToMailText("Bye.");
-            new MailService().sendMail("Server status from DPS", mailTxt, args);
+            new MailServiceHtml().sendMail("Server status from DPS", mailTxt, args);
 
         } finally {
             if (driver != null)
